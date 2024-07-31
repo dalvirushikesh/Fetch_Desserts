@@ -23,7 +23,7 @@ The Meal Detail Viewer App is a SwiftUI-based iOS application that allows users 
 
 1. Clone the repository:
    ```bash
-   git clone --  copy ssh url frol repo
+   git clone --  copy ssh url from repo
    cd -- to your project path 
 
 Open the project in Xcode:
