@@ -51,6 +51,9 @@ struct ContentView: View {
     }
 }
 
+import SwiftUI
+import AVFoundation
+
 struct MealDetailView: View {
     @ObservedObject var viewModel: MealsViewModel
     var meal: Meal
@@ -62,26 +65,32 @@ struct MealDetailView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .center, spacing: 10) {
+            VStack(alignment: .center, spacing: 20) {
                 // Name of the recipe
                 Text(meal.strMeal)
-                    .font(.title)
+                    .font(.largeTitle)
                     .bold()
                     .padding(.vertical, 10)
+                    .foregroundColor(.primary)
+                    .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 2)
 
+                // Meal Image
                 if let strMealThumb = meal.strMealThumb, let url = URL(string: strMealThumb) {
                     AsyncImage(url: url) { phase in
                         if let image = phase.image {
                             image
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
-                                .frame(width: 200, height: 200) // Adjusted for better view
+                                .frame(width: 200, height: 200)
                                 .clipShape(Circle())
+                                .overlay(Circle().stroke(Color.white, lineWidth: 4)) // Add a white border
+                                .shadow(color: Color.black.opacity(0.3), radius: 8, x: 0, y: 4)
                                 .onTapGesture {
                                     isImageTapped.toggle()
                                 }
                         } else if phase.error != nil {
                             Text("Image Load Error")
+                                .foregroundColor(.red)
                         } else {
                             ProgressView()
                         }
@@ -101,6 +110,7 @@ struct MealDetailView: View {
                                             .aspectRatio(contentMode: .fit)
                                     } else if phase.error != nil {
                                         Text("Image Load Error")
+                                            .foregroundColor(.red)
                                     } else {
                                         ProgressView()
                                     }
@@ -125,12 +135,13 @@ struct MealDetailView: View {
                     }
                     isPlaying.toggle()
                 }) {
-                    Text(isPlaying ? "Stop" : "Play") // Change the button label dynamically
-                        .font(.title)
-                        .frame(width: 90, height: 30)
+                    Text(isPlaying ? "Stop" : "Read") // Change the button label dynamically
+                        .font(.title3)
+                        .frame(width: 100, height: 40)
                         .background(isPlaying ? Color.red : Color.green)
                         .foregroundColor(.white)
-                        .cornerRadius(5)
+                        .cornerRadius(10)
+                        .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 2)
                 }
                 .padding(.horizontal)
 
@@ -139,17 +150,30 @@ struct MealDetailView: View {
                     ProgressView()
                 } else {
                     if let mealDetail = viewModel.mealDetail {
-                        VStack(alignment: .leading) {
+                        VStack(alignment: .leading, spacing: 10) {
                             Text("Instructions:")
                                 .font(.title2)
                                 .padding(.top, 10)
                                 .foregroundColor(.primary)
+                                .bold()
 
-                            Text(mealDetail.strInstructions)
-                                .lineLimit(nil)
-                                .fixedSize(horizontal: false, vertical: true)
-                                .padding(.horizontal, 20)
-                                .padding(.bottom, 10)
+                            // Splitting the instructions into steps after a full stop
+                            let instructionsSteps = mealDetail.strInstructions
+                                .components(separatedBy: ". ")
+                                .map { $0.trimmingCharacters(in: .whitespaces) }
+                                .filter { !$0.isEmpty } // Remove any empty strings
+
+                            ForEach(instructionsSteps.indices, id: \.self) { index in
+                                HStack {
+                                    Text("Step \(index + 1): \(instructionsSteps[index])")
+                                        .padding(10)
+                                        .background(Color(UIColor.systemGray6)) // Light gray background
+                                        .cornerRadius(8)
+                                        .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
+                                        .frame(maxWidth: .infinity) // Take full width
+                                }
+                                .padding(.horizontal, 10)
+                            }
 
                             Divider() // Add a divider line
 
@@ -157,11 +181,14 @@ struct MealDetailView: View {
                                 .font(.title2)
                                 .padding(.top, 10)
                                 .foregroundColor(.primary)
+                                .bold()
 
                             ForEach(1...20, id: \.self) { index in
                                 if let ingredient = mealDetail.ingredient(at: index), !ingredient.isEmpty {
                                     Text("• \(ingredient)")
-                                        .padding(.horizontal, 20)
+                                        .frame(maxWidth: .infinity, alignment: .leading) // Make text take full width
+                                        .multilineTextAlignment(.leading) // Align text to the left
+                                        .padding(.horizontal, 10)
                                         .padding(.bottom, 2)
                                 }
                             }
@@ -169,6 +196,7 @@ struct MealDetailView: View {
                         .padding(.horizontal, 20)
                     } else {
                         Text("Meal detail not found")
+                            .foregroundColor(.red)
                     }
                 }
             }
@@ -199,3 +227,4 @@ struct MealDetailView: View {
         synthesizer.speak(speechUtterance)
     }
 }
+
