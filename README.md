@@ -2,15 +2,15 @@
 
 ## Overview
 
-The Meal Detail Viewer App is a SwiftUI-based iOS application that allows users to explore detailed information about various meals. It fetches meal data from a remote source and presents a rich, interactive interface for viewing meal details, including images, instructions, and ingredients.
+The Fetch Desserts App is a SwiftUI-based iOS application that allows users to explore detailed information about various desserts. It fetches dessert data from a remote source and presents a rich, interactive interface for viewing dessert details, including images, instructions, and ingredients.
 
 ## Features
 
-- Display meal name and high-quality image
+- Display dessert name and high-quality image
 - Zoomable full-screen image view
 - Text-to-speech functionality for reading cooking instructions aloud
 - Detailed step-by-step cooking instructions
-- Comprehensive list of ingredients for each meal
+- Comprehensive list of ingredients for each dessert
 
 ## Technologies Used
 
@@ -21,10 +21,10 @@ The Meal Detail Viewer App is a SwiftUI-based iOS application that allows users 
 
 ## Installation
 
-1. Clone the repository:
+1. **Clone the repository:**
    ```bash
-   git clone --  copy ssh url from repo
-   cd -- to your project path 
+   git clone <your-repo-url>
+   cd <your-project-path>
 
 Open the project in Xcode:
 bashCopyopen MealDetailViewer.xcodeproj
